@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcrição de Vídeos do YouTube</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; text-align: center; padding: 20px; }
+        input, button { margin-top: 10px; padding: 10px; width: 100%; }
+        button { background-color: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #transcricao { margin-top: 20px; text-align: left; white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Gerador de Transcrição do YouTube</h2>
+    <p>Insira o link do vídeo e obtenha a transcrição automaticamente.</p>
+
+    <input type="text" id="youtubeUrl" placeholder="Cole o link do vídeo aqui">
+    <button onclick="gerarTranscricao()">Obter Transcrição</button>
+
+    <h3>Transcrição:</h3>
+    <div id="transcricao">Nenhuma transcrição gerada ainda.</div>
+
+    <script>
+        async function gerarTranscricao() {
+            const url = document.getElementById("youtubeUrl").value;
+            const backendUrl = "https://youtube-transcriber-1i0y.onrender.com"; // Troque pela URL do seu back-end Flask
+
+            if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
+                alert("Insira um link válido do YouTube!");
+                return;
+            }
+
+            document.getElementById("transcricao").innerText = "Obtendo transcrição...";
+
+            try {
+                const response = await fetch(backendUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+                if (data.transcricao) {
+                    document.getElementById("transcricao").innerText = data.transcricao;
+                } else {
+                    document.getElementById("transcricao").innerText = "Erro ao obter transcrição.";
+                }
+            } catch (error) {
+                document.getElementById("transcricao").innerText = "Erro ao conectar ao servidor.";
+            }
+        }
+    </script>
+
+</body>
+</html>
